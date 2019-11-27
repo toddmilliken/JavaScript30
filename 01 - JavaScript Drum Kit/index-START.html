@@ -59,6 +59,75 @@
 
 <script>
 
+  /**
+   * Drumkit object.
+   */
+  const drumkit = {
+
+    /**
+     * Initializes the drumkit.
+     */
+    init: function() {
+      this.defineSelectors();
+      this.attachEvents();
+    },
+
+    /**
+     * Defines UI selectors for easier re-use.
+     */
+    defineSelectors: function() {
+      this.keys = document.querySelectorAll( '.key' );
+    },
+
+    /**
+     * Attaches event listeners.
+     */
+    attachEvents: function() {
+      window.addEventListener( 'keydown', this.playSound );
+      this.keys.forEach( key => key.addEventListener( 'transitionend', this.removeTransition ) );
+    },
+
+    /**
+     * Callback to play a sound.
+     */
+    playSound: function( e ) {
+      // Retrieve a corresponding audio element.
+      const audio = document.querySelector( `audio[data-key="${e.keyCode}"]` );
+      // Retrieves a corresponding div for user feedback.
+      const key = document.querySelector( `.key[data-key="${e.keyCode}"]` );
+
+      // Bails early if there is no matching audio element.
+      if ( ! audio ) {
+        return;
+      }
+
+      // Reset the current time to 0.
+      audio.currentTime = 0;
+
+      // Play the audio element.
+      audio.play();
+
+      // Add user feedback by adding the playing class.
+      key.classList.add( 'playing' );
+    },
+
+    /**
+     * Callback to wait for CSS animation to finish before removing class.
+     */
+    removeTransition: function( e ) {
+      // Skip any transition that is not a transform property.
+      if ( e.propertyName !== 'transform' ) {
+        return;
+      }
+
+      // Removes play class.
+      this.classList.remove( 'playing' );
+    },
+
+  };
+
+  drumkit.init();
+
 </script>
 
 
